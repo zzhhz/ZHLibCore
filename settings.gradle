@@ -1,0 +1,2 @@
+include ':app', ':ZZHLibCore'
+rootProject.name='ZHLibCore'
