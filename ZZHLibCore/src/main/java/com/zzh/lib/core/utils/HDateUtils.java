@@ -14,7 +14,6 @@ import java.util.Date;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-import androidx.annotation.NonNull;
 
 /**
  * Created by ZZH on 2020-01-07.
@@ -35,6 +34,10 @@ public class HDateUtils {
      * 日期格式：yyyy-MM-dd HH:mm:ss
      **/
     public static final String DF_YYYY_MM_DD_HH_MM_SS = "yyyy-MM-dd HH:mm:ss";
+    /**
+     * 中文日期格式
+     */
+    public static final String DF_ZH_YYYY_MM_DD_HH_MM_SS = "yyyy年MM月dd日 HH:mm:ss";
 
     /**
      * 日期格式：yyyy-MM-dd HH:mm
