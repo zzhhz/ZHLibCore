@@ -100,13 +100,23 @@ public class HResUtils {
     }
 
     /**
-     * 获取手机status bar的高度
-     *
      * @return status bar的高
+     * @see HResUtils#getStatusBarHeight(Context)
      */
     public static int getStatusBarHeight() {
+        return getStatusBarHeight(HLibrary.getInstance().getContext());
+    }
+
+    /**
+     * 获取手机status bar的高度
+     *
+     * @param ctx 当前上下文
+     * @return status bar的高
+     * @see HResUtils#getStatusBarHeight
+     */
+    public static int getStatusBarHeight(Context ctx) {
         int height = 0;
-        int resourceId = HLibrary.getInstance().getContext().getResources().getIdentifier("status_bar_height", "dimen", "android");
+        int resourceId = ctx.getResources().getIdentifier("status_bar_height", "dimen", "android");
         if (resourceId > 0) {
             height = HLibrary.getInstance().getContext().getResources().getDimensionPixelSize(resourceId);
         }
@@ -114,30 +124,55 @@ public class HResUtils {
     }
 
     /**
-     * 获取ActionBar的高度
-     *
      * @return ActionBar的高度
+     * @see HResUtils#getActionBarHeight(Context)
      */
     public static int getActionBarHeight() {
-        TypedArray actionbarSizeTypedArray = HLibrary.getInstance().getContext().obtainStyledAttributes(new int[]{android.R.attr.actionBarSize});
+        return getActionBarHeight(HLibrary.getInstance().getContext());
+    }
+
+    /**
+     * 获取ActionBar的高度
+     *
+     * @param ctx 上下文变量
+     * @return ActionBar的高度
+     * @see HResUtils#getActionBarHeight()
+     */
+    public static int getActionBarHeight(Context ctx) {
+        TypedArray actionbarSizeTypedArray = ctx.obtainStyledAttributes(new int[]{android.R.attr.actionBarSize});
         float actionBarHeight = actionbarSizeTypedArray.getDimension(0, 0);
         return (int) actionBarHeight;
     }
 
     /**
      * 获取底部导航栏高度
+     *
+     * @param activity 当前页面
+     * @return Nav Bar 的高度
      */
     public static int getNavBarHeight(Activity activity) {
         int navigationBarHeight = 0;
         Resources resources = HLibrary.getInstance().getContext().getResources();
         int resourceId = resources.getIdentifier(isPortrait(activity) ? "navigation_bar_height" : "navigation_bar_height_landscape", "dimen", "android");
-        if (resourceId > 0 && checkDeviceHasNavigationBar(activity) && isNavigationBarVisible(activity)) {
+        if (resourceId > 0 && checkDeviceHasNavBar(activity) && isNavigationBarVisible(activity)) {
             navigationBarHeight = resources.getDimensionPixelSize(resourceId);
         }
         return navigationBarHeight;
     }
+
+    /**
+     * @return Nav Bar 的高度
+     * @see HResUtils#getNavBarHeight(Activity)
+     */
+    public static int getNavBarHeight() {
+        return getNavBarHeight(HLibrary.getLastActivity());
+    }
+
     /**
      * 手机具有底部导航栏时，底部导航栏是否可见
+     *
+     * @param activity 判断导航栏是否可见
+     * @return true 可见
      */
     public static boolean isNavigationBarVisible(Activity activity) {
 
@@ -163,9 +198,19 @@ public class HResUtils {
     }
 
     /**
-     * 检测是否具有底部导航栏
+     * @see HResUtils#isNavigationBarVisible(Activity)
      */
-    public static boolean checkDeviceHasNavigationBar(Activity activity) {
+    public static boolean isNavigationBarVisible() {
+        return isNavigationBarVisible(HLibrary.getLastActivity());
+    }
+
+    /**
+     * 检测是否具有底部导航栏
+     *
+     * @param activity 当前activity
+     * @return true 具有底部导航栏
+     */
+    public static boolean checkDeviceHasNavBar(Activity activity) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
             WindowManager windowManager = activity.getWindowManager();
             Display display = windowManager.getDefaultDisplay();
@@ -201,21 +246,43 @@ public class HResUtils {
     }
 
     /**
+     * @return
+     * @see HResUtils#checkDeviceHasNavBar(Activity)
+     */
+    public static boolean checkDeviceHasNavBar() {
+        return checkDeviceHasNavBar(HLibrary.getLastActivity());
+    }
+
+    /**
      * 是否为竖屏
      */
-    public static boolean isPortrait(Activity activity) {
+    public static boolean isPortrait(Context activity) {
         return activity.getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT;
     }
 
+
+    /**
+     * @see HResUtils#getDisplayWidth(Context)
+     */
+    public static int getDisplayWidth() {
+        return getDisplayWidth(HLibrary.getInstance().getContext());
+    }
 
     /**
      * 获取屏幕的宽度
      *
      * @return 屏幕宽度
      */
-    public static int getDisplayWidth() {
-        DisplayMetrics dm = HLibrary.getInstance().getContext().getApplicationContext().getResources().getDisplayMetrics();
+    public static int getDisplayWidth(Context ctx) {
+        DisplayMetrics dm = ctx.getApplicationContext().getResources().getDisplayMetrics();
         return dm.widthPixels;
+    }
+
+    /**
+     * @see HResUtils#getDisplayHeight(Context)
+     */
+    public static int getDisplayHeight() {
+        return getDisplayHeight(HLibrary.getInstance().getContext());//获取宽度
     }
 
     /**
@@ -223,10 +290,11 @@ public class HResUtils {
      * getRealMetrics 这个方法是API 17之后才有的，之前的使用@hide 来标记的，并不对外开放API，
      * 所以API 小于 17使用反射的方法取得屏幕的真实高度
      *
+     * @param ctx 上下文
      * @return 屏幕高度
      */
-    public static int getDisplayHeight() {
-        WindowManager wm = (WindowManager) HLibrary.getInstance().getContext().getSystemService(Context.WINDOW_SERVICE);
+    public static int getDisplayHeight(Context ctx) {
+        WindowManager wm = (WindowManager) ctx.getSystemService(Context.WINDOW_SERVICE);
         DisplayMetrics dm = new DisplayMetrics();
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
             wm.getDefaultDisplay().getRealMetrics(dm);
@@ -249,7 +317,7 @@ public class HResUtils {
     }
 
     /**
-     * @param px  像素
+     * @param px 像素
      * @return 返回值单位是dp
      */
     public static int px2dp(float px) {
@@ -258,7 +326,7 @@ public class HResUtils {
     }
 
     /**
-     * @param dp  dp值
+     * @param dp dp值
      * @return 返回像素值
      */
     public static int dp2px(float dp) {
@@ -267,7 +335,7 @@ public class HResUtils {
     }
 
     /**
-     * @param px  像素
+     * @param px 像素
      * @return 返回值单位是dp
      */
     public static int px2sp(float px) {
@@ -276,7 +344,7 @@ public class HResUtils {
     }
 
     /**
-     * @param sp  字体大小
+     * @param sp 字体大小
      * @return 返回字体像素值
      */
     public static int sp2px(float sp) {
