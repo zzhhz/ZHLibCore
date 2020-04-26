@@ -179,12 +179,10 @@ public class HResUtils {
      * @return true 可见
      */
     public static boolean isNavigationBarVisible(Activity activity) {
-
         if (XIAOMI_BRAND.equalsIgnoreCase(HDeviceUtils.getDeviceBrand())) {
             int val = Settings.Global.getInt(activity.getContentResolver(), XIAOMI_FULLSCREEN_GESTURE, 0);
-            return val != 0;
+            return val == 0;
         } else {
-
             boolean show = false;
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
                 Display display = activity.getWindow().getWindowManager().getDefaultDisplay();
