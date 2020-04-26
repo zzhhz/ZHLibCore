@@ -8,6 +8,7 @@ import android.content.res.TypedArray;
 import android.graphics.Point;
 import android.graphics.Rect;
 import android.os.Build;
+import android.provider.Settings;
 import android.util.DisplayMetrics;
 import android.view.Display;
 import android.view.View;
@@ -29,6 +30,9 @@ import java.lang.reflect.Method;
  * @since 1.0
  */
 public class HResUtils {
+
+    public static final String XIAOMI_FULLSCREEN_GESTURE = "force_fsg_nav_bar";
+    public static final String XIAOMI_BRAND = "Xiaomi";
     /**
      * 获取字符串资源
      *
@@ -170,31 +174,39 @@ public class HResUtils {
 
     /**
      * 手机具有底部导航栏时，底部导航栏是否可见
-     *
+     * 在小米手机上小米8、小米MIX系列全面屏无效，隐藏虚拟按键仍旧返回true
      * @param activity 判断导航栏是否可见
      * @return true 可见
      */
     public static boolean isNavigationBarVisible(Activity activity) {
 
-        boolean show = false;
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
-            Display display = activity.getWindow().getWindowManager().getDefaultDisplay();
-            Point point = new Point();
-            display.getRealSize(point);
-            View decorView = activity.getWindow().getDecorView();
-            Configuration conf = activity.getResources().getConfiguration();
-            if (Configuration.ORIENTATION_LANDSCAPE == conf.orientation) {
-                View contentView = decorView.findViewById(android.R.id.content);
-                if (contentView != null) {
-                    show = (point.x != contentView.getWidth());
+        if (XIAOMI_BRAND.equalsIgnoreCase(HDeviceUtils.getDeviceBrand())) {
+            int val = Settings.Global.getInt(activity.getContentResolver(), XIAOMI_FULLSCREEN_GESTURE, 0);
+            return val != 0;
+        } else {
+
+            boolean show = false;
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+                Display display = activity.getWindow().getWindowManager().getDefaultDisplay();
+                Point point = new Point();
+                display.getRealSize(point);
+                View decorView = activity.getWindow().getDecorView();
+                Configuration conf = activity.getResources().getConfiguration();
+                if (Configuration.ORIENTATION_LANDSCAPE == conf.orientation) {
+                    View contentView = decorView.findViewById(android.R.id.content);
+                    if (contentView != null) {
+                        show = (point.x != contentView.getWidth());
+                    }
+                } else {
+                    Rect rect = new Rect();
+                    decorView.getWindowVisibleDisplayFrame(rect);
+                    show = (rect.bottom != (point.y - getStatusBarHeight(activity)));
+                    LogUtils.e(String.valueOf(point.y));
+                    LogUtils.e(String.valueOf(rect.bottom));
                 }
-            } else {
-                Rect rect = new Rect();
-                decorView.getWindowVisibleDisplayFrame(rect);
-                show = (rect.bottom != point.y);
             }
+            return show;
         }
-        return show;
     }
 
     /**
