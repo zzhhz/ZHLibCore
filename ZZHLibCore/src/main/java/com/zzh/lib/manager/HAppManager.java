@@ -10,6 +10,13 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
+/**
+ * @Date: 2020/7/17 15:58
+ * @Email: zzh_hz@126.com
+ * @QQ: 1299234582
+ * @Author: zzh
+ * @Description: activity 管理类
+ */
 public class HAppManager {
     private static HAppManager sInstance;
 

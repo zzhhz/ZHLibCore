@@ -1,14 +1,20 @@
 package com.zzh.lib.core.utils;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.os.Environment;
 import android.os.StatFs;
 import android.text.TextUtils;
 
+import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
+import java.io.BufferedReader;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 
@@ -23,6 +29,9 @@ import java.text.SimpleDateFormat;
  * @since 1.0
  */
 public class HFileUtils {
+
+    public static final int MEM_SAVE_SIZE_UNIT = 1024;
+
     /**
      * 文件操作
      *
@@ -254,15 +263,15 @@ public class HFileUtils {
      */
     public static String getFormatSize(long size) {
         DecimalFormat formater = new DecimalFormat("####.00");
-        if (size < 1024) {
+        if (size < MEM_SAVE_SIZE_UNIT) {
             return size + "bytes";
-        } else if (size < 1024 * 1024) {
+        } else if (size < MEM_SAVE_SIZE_UNIT * MEM_SAVE_SIZE_UNIT) {
             float kbSize = size / 1024f;
             return formater.format(kbSize) + "KB";
-        } else if (size < 1024 * 1024 * 1024) {
+        } else if (size < MEM_SAVE_SIZE_UNIT * MEM_SAVE_SIZE_UNIT * MEM_SAVE_SIZE_UNIT) {
             float mbSize = size / 1024f / 1024f;
             return formater.format(mbSize) + "MB";
-        } else if (size < 1024 * 1024 * 1024 * 1024) {
+        } else if (size < MEM_SAVE_SIZE_UNIT * MEM_SAVE_SIZE_UNIT * MEM_SAVE_SIZE_UNIT * MEM_SAVE_SIZE_UNIT) {
             float gbSize = size / 1024f / 1024f / 1024f;
             return formater.format(gbSize) + "GB";
         } else {
@@ -280,4 +289,89 @@ public class HFileUtils {
         SimpleDateFormat format = new SimpleDateFormat("HH:mm:ss");
         return format.format(time);
     }
+
+    /**
+     * 读取文本文件中的一行
+     *
+     * @param path 文件路径
+     * @return 返回读取到的字符串
+     */
+    public static String readLine(String path) throws IOException {
+        if (TextUtils.isEmpty(path)) {
+            return null;
+        }
+        File file = new File(path);
+        if (!file.exists()) {
+            return null;
+        }
+        BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(file)));
+        return reader.readLine();
+    }
+
+    /**
+     * 读取文本文件
+     *
+     * @param path 文本文件路径
+     * @return
+     */
+    public static String readText(String path) {
+        byte[] read = read(path);
+        return new String(read);
+    }
+
+    /**
+     * 读取文件
+     *
+     * @param path 文件路径
+     * @return 返回字节数组
+     */
+    public static byte[] read(String path) {
+        BufferedInputStream bis = null;
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+
+        try {
+            bis = new BufferedInputStream(new FileInputStream(new File(path)));
+            byte[] buffer = new byte[8 * 1024];
+            int c = 0;
+            while ((c = bis.read(buffer)) != -1) {
+                baos.write(buffer, 0, c);
+                baos.flush();
+            }
+            return baos.toByteArray();
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                baos.close();
+                bis.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        return null;
+    }
+
+    /**
+     * 将bitmap转换成byte数组
+     *
+     * @param bmp         bitmap实例
+     * @param needRecycle 是否需要回收
+     * @return 字节数组
+     */
+    public static byte[] bmpToByteArray(final Bitmap bmp, final boolean needRecycle) {
+        ByteArrayOutputStream output = new ByteArrayOutputStream();
+        bmp.compress(Bitmap.CompressFormat.PNG, 100, output);
+        if (needRecycle) {
+            bmp.recycle();
+        }
+        byte[] result = output.toByteArray();
+        try {
+            output.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return result;
+    }
+
 }

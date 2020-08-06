@@ -1,13 +1,17 @@
 package com.zzh.lib.core.utils;
 
+import android.annotation.TargetApi;
 import android.os.Build;
 import android.text.TextUtils;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.time.ZoneId;
+import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.TemporalAccessor;
 import java.util.Date;
@@ -64,12 +68,28 @@ public class HDateUtils {
      */
     public static final String DF_HH_MM = "HH:mm";
 
-    private final static long MINUTE = 60 * 1000;// 1分钟
-    private final static long HOUR = 60 * MINUTE;// 1小时
-    private final static long DAY = 24 * HOUR;// 1天
-    private final static long MONTH = 31 * DAY;// 月
-    private final static long YEAR = 12 * MONTH;// 年
+    public final static long MINUTE = 60 * 1000;// 1分钟
+    public final static long HOUR = 60 * MINUTE;// 1小时
+    public final static long DAY = 24 * HOUR;// 1天
+    public final static long MONTH = 31 * DAY;// 月
+    public final static long YEAR = 12 * MONTH;// 年
     public final static long FOUR_HOUR = 14400000;
+
+
+    /**
+     * @param date    日期字符串
+     * @param pattern 日期字符串格式
+     * @return 返回格式化的日期
+     */
+    public static Date parse(String date, String pattern) throws ParseException {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            DateTimeFormatter formatter = createCacheFormatter(pattern);
+            return Date.from(LocalDateTime.parse(date, formatter).toInstant(ZoneOffset.from(OffsetDateTime.now())));
+        } else {
+            return createCacheLowLevelFormatter(pattern).parse(date);
+        }
+    }
+
 
     /**
      * 日期格式化
@@ -124,7 +144,8 @@ public class HDateUtils {
      * @param pattern 格式化后的样式
      * @return DateTimeFormatter实例
      */
-    private static DateTimeFormatter createCacheFormatter(String pattern) {
+    @TargetApi(Build.VERSION_CODES.O)
+    public static DateTimeFormatter createCacheFormatter(String pattern) {
         if (TextUtils.isEmpty(pattern)) {
             throw new IllegalArgumentException("-------格式化pattern为空----");
         }
@@ -148,7 +169,7 @@ public class HDateUtils {
      * @param pattern 格式化后的样式
      * @return SimpleDateFormat实例
      */
-    private static SimpleDateFormat createCacheLowLevelFormatter(String pattern) {
+    public static SimpleDateFormat createCacheLowLevelFormatter(String pattern) {
         if (TextUtils.isEmpty(pattern)) {
             throw new IllegalArgumentException("-------格式化pattern为空----");
         }
@@ -164,6 +185,4 @@ public class HDateUtils {
         }
         return dateFormat;
     }
-
-
 }

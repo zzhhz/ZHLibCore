@@ -33,6 +33,10 @@ public class HResUtils {
 
     public static final String XIAOMI_FULLSCREEN_GESTURE = "force_fsg_nav_bar";
     public static final String XIAOMI_BRAND = "Xiaomi";
+    public static final String VIVO_BRAND = "vivo";
+    public static final String MEIZU_BRAND = "Meizu";
+    public static final String HUAWEI_BRAND = "HUAWEI";
+
     /**
      * 获取字符串资源
      *
@@ -64,14 +68,28 @@ public class HResUtils {
         return HLibrary.getLastActivity().getResources().getColor(colorRes);
     }
 
+    /**
+     * @param resId 资源id
+     * @return 资源id指向的具体值
+     */
     public static float getDimension(int resId) {
         return HLibrary.getLastActivity().getResources().getDimension(resId);
     }
 
+    /**
+     * @param resId 资源id
+     * @return 资源id指向的舍去小数的值
+     * @link HResUtils.getDemension(resId)
+     */
     public static int getDimensionPixelOffset(int resId) {
         return HLibrary.getLastActivity().getResources().getDimensionPixelOffset(resId);
     }
 
+    /**
+     * @param resId 资源id
+     * @return 资源id指向的四舍五入之后的值
+     * @link HResUtils.getDemension(resId)
+     */
     public static int getDimensionPixelSize(int resId) {
         return HLibrary.getLastActivity().getResources().getDimensionPixelSize(resId);
     }
@@ -175,6 +193,7 @@ public class HResUtils {
     /**
      * 手机具有底部导航栏时，底部导航栏是否可见
      * 在小米手机上小米8、小米MIX系列全面屏无效，隐藏虚拟按键仍旧返回true
+     *
      * @param activity 判断导航栏是否可见
      * @return true 可见
      */
@@ -187,7 +206,9 @@ public class HResUtils {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
                 Display display = activity.getWindow().getWindowManager().getDefaultDisplay();
                 Point point = new Point();
+                Point v = new Point();
                 display.getRealSize(point);
+                display.getSize(v);
                 View decorView = activity.getWindow().getDecorView();
                 Configuration conf = activity.getResources().getConfiguration();
                 if (Configuration.ORIENTATION_LANDSCAPE == conf.orientation) {
@@ -198,9 +219,10 @@ public class HResUtils {
                 } else {
                     Rect rect = new Rect();
                     decorView.getWindowVisibleDisplayFrame(rect);
-                    show = (rect.bottom != (point.y - getStatusBarHeight(activity)));
+                    show = (rect.bottom - (point.y) > 80);
                     LogUtils.e(String.valueOf(point.y));
                     LogUtils.e(String.valueOf(rect.bottom));
+                    LogUtils.e(String.valueOf(v.y));
                 }
             }
             return show;
