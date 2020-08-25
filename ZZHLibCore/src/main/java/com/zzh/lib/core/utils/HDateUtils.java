@@ -7,7 +7,6 @@ import android.text.TextUtils;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.Instant;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 import java.time.ZoneId;
@@ -119,7 +118,7 @@ public class HDateUtils {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             Instant instant = date.toInstant();
             ZoneId zone = ZoneId.systemDefault();
-            LocalDate localDate = LocalDateTime.ofInstant(instant, zone).toLocalDate();
+            LocalDateTime localDate = LocalDateTime.ofInstant(instant, zone);
             return format(localDate, pattern);
         } else {
             SimpleDateFormat cacheLowLevelFormatter = createCacheLowLevelFormatter(pattern);
