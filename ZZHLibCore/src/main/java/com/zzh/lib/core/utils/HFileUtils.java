@@ -6,6 +6,8 @@ import android.os.Environment;
 import android.os.StatFs;
 import android.text.TextUtils;
 
+import com.zzh.lib.core.HLibrary;
+
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
@@ -92,6 +94,49 @@ public class HFileUtils {
     }
 
     /**
+     * SD卡 私有目录路径
+     * <p>
+     * /storage/emulated/0/Android/data/xxx.xxx.xx(包名)/
+     *
+     * @return 私有目录路径
+     */
+    public static String getExternalPath(Context ctx) {
+        return ctx.getExternalCacheDir().getParent();
+    }
+
+    /**
+     * SD卡 私有目录路径
+     * <p>
+     * /storage/emulated/0/Android/data/xxx.xxx.xx(包名)/
+     *
+     * @return 私有目录路径
+     */
+    public static String getExternalPath() {
+        return getExternalPath(HLibrary.getInstance().getContext());
+    }
+
+    /**
+     * 私有目录路径
+     * <p>
+     * /data/data/xxx.xxx.xx/
+     *
+     * @return 私有目录路径
+     */
+    public static String getPrivatePath(Context ctx) {
+        return ctx.getCacheDir().getParent();
+    }
+
+    /**
+     * 私有目录路径
+     * /data/data/xxx.xxx.xx/
+     *
+     * @return 私有目录路径
+     */
+    public static String getPrivatePath() {
+        return getPrivatePath(HLibrary.getInstance().getContext());
+    }
+
+    /**
      * 获取可用的SD卡路径（若SD卡不没有挂载则返回""）
      *
      * @return
@@ -174,7 +219,6 @@ public class HFileUtils {
                 }
             }
         }
-
         return false;
     }
 
@@ -210,6 +254,29 @@ public class HFileUtils {
             }
         }
         return cacheDir.getAbsolutePath();
+    }
+
+    /**
+     * 获取应用文件的缓存目录
+     * <p>
+     * /data/data/xxx.xxx.xx(包名)/files/
+     *
+     * @param context
+     * @return 缓存目录的绝对路径
+     */
+    public static File getFileDir(Context context) {
+        return context.getFilesDir();
+    }
+
+    /**
+     * 获取应用文件的缓存目录
+     * <p>
+     * /data/data/xxx.xxx.xx(包名)/files/
+     *
+     * @return 文件缓存目录
+     */
+    public static File getFileDir() {
+        return getFileDir(HLibrary.getInstance().getContext());
     }
 
     /**

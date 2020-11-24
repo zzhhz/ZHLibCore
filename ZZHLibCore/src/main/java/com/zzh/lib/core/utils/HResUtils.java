@@ -37,6 +37,7 @@ public class HResUtils {
     public static final String MEIZU_BRAND = "Meizu";
     public static final String HUAWEI_BRAND = "HUAWEI";
 
+
     /**
      * 获取字符串资源
      *

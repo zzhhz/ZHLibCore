@@ -35,6 +35,9 @@ public class HLibrary {
     }
 
     public Context getContext() {
+        if (mContext == null) {
+            throw new NullPointerException("application is null, please check invoke init method");
+        }
         return mContext;
     }
 
