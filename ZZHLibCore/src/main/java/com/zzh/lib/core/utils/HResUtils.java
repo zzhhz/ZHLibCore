@@ -9,7 +9,9 @@ import android.graphics.Point;
 import android.graphics.Rect;
 import android.os.Build;
 import android.provider.Settings;
+import android.text.TextUtils;
 import android.util.DisplayMetrics;
+import android.util.SparseArray;
 import android.view.Display;
 import android.view.View;
 import android.view.WindowManager;
@@ -37,6 +39,15 @@ public class HResUtils {
     public static final String MEIZU_BRAND = "Meizu";
     public static final String HUAWEI_BRAND = "HUAWEI";
 
+    final static SparseArray<String> strCache;
+    final static SparseArray<Integer> colorCache;
+    final static SparseArray<Float> dimenCache;
+
+    static {
+        strCache = new SparseArray<>();
+        colorCache = new SparseArray<>();
+        dimenCache = new SparseArray<>();
+    }
 
     /**
      * 获取字符串资源
@@ -45,7 +56,13 @@ public class HResUtils {
      * @return 字符串
      */
     public static String getString(int resId) {
-        return HLibrary.getLastActivity().getString(resId);
+        String strRes = strCache.get(resId);
+        if (TextUtils.isEmpty(strRes)) {
+            String value = HLibrary.getLastActivity().getString(resId);
+            strCache.put(resId, value);
+            return value;
+        }
+        return strRes;
     }
 
     /**
@@ -66,7 +83,13 @@ public class HResUtils {
      * @return 颜色值
      */
     public static int getIntColor(int colorRes) {
-        return HLibrary.getLastActivity().getResources().getColor(colorRes);
+        Integer value = colorCache.get(colorRes);
+        if (value == null || value <= 0) {
+            int color = HLibrary.getLastActivity().getResources().getColor(colorRes);
+            colorCache.put(colorRes, color);
+            return color;
+        }
+        return value;
     }
 
     /**
@@ -74,13 +97,19 @@ public class HResUtils {
      * @return 资源id指向的具体值
      */
     public static float getDimension(int resId) {
-        return HLibrary.getLastActivity().getResources().getDimension(resId);
+        Float value = dimenCache.get(resId);
+        if (value == null || value <= 0) {
+            float dimension = HLibrary.getLastActivity().getResources().getDimension(resId);
+            dimenCache.put(resId, dimension);
+            return dimension;
+        }
+        return value;
     }
 
     /**
      * @param resId 资源id
      * @return 资源id指向的舍去小数的值
-     * @link HResUtils.getDemension(resId)
+     * @link HResUtils.getDimensionPixelOffset(resId)
      */
     public static int getDimensionPixelOffset(int resId) {
         return HLibrary.getLastActivity().getResources().getDimensionPixelOffset(resId);
@@ -105,7 +134,7 @@ public class HResUtils {
      */
     public static int getIdentifier(String name, String defType, String defPackage) {
         try {
-            return HLibrary.getLastActivity().getResources().getIdentifier(name, defType, defPackage);
+            return HLibrary.getInstance().getContext().getResources().getIdentifier(name, defType, defPackage);
         } catch (Exception var4) {
             var4.printStackTrace();
             return 0;

@@ -80,17 +80,40 @@ public class HFileUtils {
 
     /**
      * 私有缓存目录。如果需要缓存多重类型的文件，建议在此目录下再次进行新建目录划分
+     * <p>
+     * /storage/emulated/0/Android/data/xxx.xxx.xx(包名)/cache 或者 /data/data/xxx.xxx.xx/
      *
-     * @return 缓存路径
+     * @return 缓存路径, 文件夹
      */
-    public static String getPrivateCachePath(Context ctx) {
+    public static File getCacheFile() {
         File cacheDir = null;
-        if (Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState())) {
-            cacheDir = ctx.getExternalCacheDir();
+        if (isMountedSDCard()) {
+            cacheDir = getExternalCacheDir();
         } else {
-            cacheDir = ctx.getCacheDir();
+            cacheDir = getCacheDir();
         }
-        return cacheDir.getAbsolutePath();
+        return cacheDir;
+    }
+
+    /**
+     * 私有缓存目录。如果需要缓存多重类型的文件，建议在此目录下再次进行新建目录划分
+     * /storage/emulated/0/Android/data/xxx.xxx.xx(包名)/cache
+     *
+     * @return 缓存路径 文件夹
+     */
+    public static File getExternalCacheDir() {
+        return HLibrary.getInstance().getContext().getExternalCacheDir();
+    }
+
+    /**
+     * 私有缓存目录。如果需要缓存多重类型的文件，建议在此目录下再次进行新建目录划分
+     * <p>
+     * /data/data/xxx.xxx.xx/
+     *
+     * @return 缓存路径 文件夹
+     */
+    public static File getCacheDir() {
+        return HLibrary.getInstance().getContext().getCacheDir();
     }
 
     /**
@@ -102,6 +125,17 @@ public class HFileUtils {
      */
     public static String getExternalPath(Context ctx) {
         return ctx.getExternalCacheDir().getParent();
+    }
+
+    /**
+     * SD卡 私有目录路径
+     * <p>
+     * /storage/emulated/0/Android/data/xxx.xxx.xx(包名)/
+     *
+     * @return 私有目录路径
+     */
+    public static File getExternalFile() {
+        return HLibrary.getInstance().getContext().getExternalCacheDir().getParentFile();
     }
 
     /**
@@ -128,12 +162,54 @@ public class HFileUtils {
 
     /**
      * 私有目录路径
+     * <p>
      * /data/data/xxx.xxx.xx/
      *
      * @return 私有目录路径
      */
     public static String getPrivatePath() {
         return getPrivatePath(HLibrary.getInstance().getContext());
+    }
+
+    /**
+     * 私有目录路径
+     * <p>
+     * /data/data/xxx.xxx.xx/
+     *
+     * @return 私有目录路径
+     */
+    public static File getPrivateFile() {
+        return HLibrary.getInstance().getContext().getCacheDir().getParentFile();
+    }
+
+    /**
+     * 数据库私有路径
+     * <p>
+     * /data/data/xxx.xxx.xx/databases
+     *
+     * @return 私有目录路径
+     */
+    public static File getDatabaseFile() {
+        File file = new File(getPrivateFile(), "databases");
+        if (!file.exists()) {
+            file.mkdirs();
+        }
+        return file;
+    }
+
+    /**
+     * SD卡数据库目录路径
+     * <p>
+     * /storage/emulated/0/Android/data/xxx.xxx.xx/databases
+     *
+     * @return 私有目录路径
+     */
+    public static File getExternalDatabaseFile() {
+        File file = new File(getPrivateFile(), "databases");
+        if (!file.exists()) {
+            file.mkdirs();
+        }
+        return file;
     }
 
     /**
@@ -153,73 +229,29 @@ public class HFileUtils {
     }
 
     /**
-     * 获取可用的SD卡文件实例
-     *
-     * @return SD卡文件实例
-     */
-    public static File getSDCardRootFile() {
-        if (isMountedSDCard()) {
-            return Environment.getExternalStorageDirectory();
-        }
-        return null;
-    }
-
-    /**
-     * 返回指定的文件路径
-     *
-     * @param type 文件类型
-     * @return
-     */
-    public static String getSDCardDirectory(String type) {
-        if (isMountedSDCard()) {
-            return Environment.getExternalStoragePublicDirectory(type).getAbsolutePath();
-        }
-        return null;
-    }
-
-    /**
-     * 创建文件夹
-     *
-     * @param filePath 文件夹路径
-     * @return
-     */
-    public static boolean createSDCardDirectory(String filePath) {
-        if (isMountedSDCard()) {
-            String sdCardRootPath = getSDCardRootPath();
-            File file = new File(sdCardRootPath, filePath);
-            if (!file.exists()) {
-                return file.mkdirs();
-            }
-        }
-        return false;
-    }
-
-    /**
      * 创建文件
      *
      * @param path 文件路径
      * @return 创建文件是否成功。
      */
-    public static boolean createSDCardFile(String path) {
-        if (isMountedSDCard()) {
-            File file = new File(path);
-            if (file.exists()) {
-                return true;
-            } else {
-                File parentFile = file.getParentFile();
-                boolean mkdirs = parentFile.mkdirs();
-                if (mkdirs) {
-                    try {
-                        return file.createNewFile();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                } else {
+    public static boolean createFile(String path) {
+        File file = new File(path);
+        if (file.exists()) {
+            return true;
+        } else {
+            File parentFile = file.getParentFile();
+            boolean mkdirs = parentFile.mkdirs();
+            if (mkdirs) {
+                try {
+                    return file.createNewFile();
+                } catch (IOException e) {
+                    e.printStackTrace();
                     return false;
                 }
+            } else {
+                return false;
             }
         }
-        return false;
     }
 
     /**
@@ -246,6 +278,25 @@ public class HFileUtils {
         File cacheDir = context.getCacheDir();
         if (isMountedSDCard()) {
             File nCacheDir = context.getExternalCacheDir();
+            // 部分手机有卡不可写
+            if (nCacheDir != null) {
+                if (nCacheDir.canWrite()) {
+                    cacheDir = nCacheDir;
+                }
+            }
+        }
+        return cacheDir.getAbsolutePath();
+    }
+
+    /**
+     * 获取应用缓存目录的绝对路径，优先使用外部SD卡的缓存路径
+     *
+     * @return 缓存目录的绝对路径
+     */
+    public static String getDiskCacheDir() {
+        File cacheDir = HLibrary.getInstance().getContext().getCacheDir();
+        if (isMountedSDCard()) {
+            File nCacheDir = HLibrary.getInstance().getContext().getExternalCacheDir();
             // 部分手机有卡不可写
             if (nCacheDir != null) {
                 if (nCacheDir.canWrite()) {

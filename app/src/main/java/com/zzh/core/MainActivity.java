@@ -1,10 +1,8 @@
 package com.zzh.core;
 
 
-import android.Manifest;
 import android.annotation.TargetApi;
 import android.app.Activity;
-import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
@@ -12,10 +10,11 @@ import android.view.View;
 import com.zzh.lib.core.HLibrary;
 import com.zzh.lib.core.utils.HDeviceUtils;
 import com.zzh.lib.core.utils.HFileUtils;
-import com.zzh.lib.core.utils.HResUtils;
 import com.zzh.lib.core.utils.LogUtils;
 
 import java.io.File;
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 
 /**
  * @Date: 2020/7/17 15:59
@@ -39,31 +38,28 @@ public class MainActivity extends Activity {
         LogUtils.e(HDeviceUtils.getDeviceManufacturer());
         LogUtils.e(HDeviceUtils.getDeviceUser());
 
-        boolean navigationBarVisible = HResUtils.isNavigationBarVisible(this);
-        /*Log.e("-----", "--------nav bar 是否可见--------" + navigationBarVisible + ",\t\n -------has-" + HResUtils.checkDeviceHasNavBar(this));
-        Log.e("-----", "\t\nnav bar: " + HResUtils.getNavBarHeight(this)
-                + ", \t\nstatus bar: " + HResUtils.getStatusBarHeight(this)
-                + ", \t\naction bar: " + HResUtils.getActionBarHeight(this)
-                + ", \t\nscreen height: " + HResUtils.getDisplayHeight(this));*/
-        LogUtils.e("----disk cache dir: " + HFileUtils.getDiskCacheDir());
-        String rootPath = HFileUtils.getSDCardRootPath();
-        LogUtils.e("----disk root dir: " + rootPath);
-        LogUtils.e("----disk root size: " + HFileUtils.getSDAllSize());
+        String absolutePath = HFileUtils.getDatabaseFile().getAbsolutePath();
+        LogUtils.e(absolutePath);
 
+        File file = new File(absolutePath, "aaa.log");
+        if (!file.exists()){
+            try {
+                file.createNewFile();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        try {
+            HFileUtils.saveFile("测试测试数据库".getBytes("UTF-8"), file);
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
 
     }
 
     @TargetApi(Build.VERSION_CODES.M)
     public void onClickView(View view) {
-        if (checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
-            boolean directory = HFileUtils.createSDCardDirectory(new File(HFileUtils.getSDCardRootPath(), "test-aaa").getAbsolutePath());
-            LogUtils.e("----disk create dir: " + directory);
-            boolean dirPackage = HFileUtils.createSDCardDirectory(new File(HFileUtils.getSDCardRootPath(), getPackageName()).getAbsolutePath());
-            LogUtils.e("----disk create package dir: " + dirPackage);
-            LogUtils.e("----disk create package: " + HFileUtils.createSDCardDirectory("/storage/emulated/0/Android/data/com.zzh.core/test"));
-        } else {
-            requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1000);
-        }
+
 
     }
 }
