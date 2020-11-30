@@ -1,15 +1,15 @@
 package com.zzh.core;
 
 
-import android.annotation.TargetApi;
 import android.app.Activity;
-import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.EditText;
 
 import com.zzh.lib.core.HLibrary;
 import com.zzh.lib.core.utils.HDeviceUtils;
 import com.zzh.lib.core.utils.HFileUtils;
+import com.zzh.lib.core.utils.HKeyboardUtils;
 import com.zzh.lib.core.utils.LogUtils;
 
 import java.io.File;
@@ -25,12 +25,15 @@ import java.io.UnsupportedEncodingException;
  */
 public class MainActivity extends Activity {
 
+    EditText et_text;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         HLibrary.getInstance().init(this.getApplication());
         HLibrary.setDebug(true);
+        et_text = findViewById(R.id.et_text);
         LogUtils.e(HDeviceUtils.getDeviceBrand());
         LogUtils.e(HDeviceUtils.getDeviceProduct());
         LogUtils.e(HDeviceUtils.getDeviceBoard());
@@ -42,7 +45,7 @@ public class MainActivity extends Activity {
         LogUtils.e(absolutePath);
 
         File file = new File(absolutePath, "aaa.log");
-        if (!file.exists()){
+        if (!file.exists()) {
             try {
                 file.createNewFile();
             } catch (IOException e) {
@@ -57,9 +60,7 @@ public class MainActivity extends Activity {
 
     }
 
-    @TargetApi(Build.VERSION_CODES.M)
     public void onClickView(View view) {
-
-
+        HKeyboardUtils.openKeyboard(et_text);
     }
 }
