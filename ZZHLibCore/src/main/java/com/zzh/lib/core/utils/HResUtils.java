@@ -7,6 +7,7 @@ import android.content.res.Resources;
 import android.content.res.TypedArray;
 import android.graphics.Point;
 import android.graphics.Rect;
+import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.provider.Settings;
 import android.text.TextUtils;
@@ -219,6 +220,16 @@ public class HResUtils {
      */
     public static int getNavBarHeight() {
         return getNavBarHeight(HLibrary.getLastActivity());
+    }
+
+    /**
+     * 获取资源
+     *
+     * @param resId 图片资源ID
+     * @return drawable 资源
+     */
+    public static Drawable getDrawable(int resId) {
+        return HLibrary.getInstance().getContext().getResources().getDrawable(resId);
     }
 
     /**
