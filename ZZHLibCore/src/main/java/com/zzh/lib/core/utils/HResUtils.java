@@ -206,6 +206,7 @@ public class HResUtils {
         int navigationBarHeight = 0;
         Resources resources = HLibrary.getInstance().getContext().getResources();
         int resourceId = resources.getIdentifier(isPortrait(activity) ? "navigation_bar_height" : "navigation_bar_height_landscape", "dimen", "android");
+        LogUtils.d("-------NAV BAR--resourceId: " + resourceId);
         if (resourceId > 0 && checkDeviceHasNavBar(activity) && isNavigationBarVisible(activity)) {
             navigationBarHeight = resources.getDimensionPixelSize(resourceId);
         }
@@ -230,6 +231,7 @@ public class HResUtils {
     public static boolean isNavigationBarVisible(Activity activity) {
         if (XIAOMI_BRAND.equalsIgnoreCase(HDeviceUtils.getDeviceBrand())) {
             int val = Settings.Global.getInt(activity.getContentResolver(), XIAOMI_FULLSCREEN_GESTURE, 0);
+            LogUtils.d("--------nav bar show: " + val);
             return val == 0;
         } else {
             boolean show = false;
@@ -249,12 +251,13 @@ public class HResUtils {
                 } else {
                     Rect rect = new Rect();
                     decorView.getWindowVisibleDisplayFrame(rect);
-                    show = (rect.bottom - (point.y) > 80);
+                    show = (Math.abs(rect.bottom - point.y) > 80);
                     LogUtils.e(String.valueOf(point.y));
                     LogUtils.e(String.valueOf(rect.bottom));
                     LogUtils.e(String.valueOf(v.y));
                 }
             }
+            LogUtils.d("--------nav bar show: " + show);
             return show;
         }
     }
@@ -302,7 +305,9 @@ public class HResUtils {
                     hasNavigationBar = true;
                 }
             } catch (Exception e) {
+                LogUtils.e(e.getMessage());
             }
+            LogUtils.d("----------hasNavigationBar： " + hasNavigationBar);
             return hasNavigationBar;
         }
     }

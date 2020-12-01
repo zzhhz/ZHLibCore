@@ -1,20 +1,22 @@
 package com.zzh.core;
 
 
+import android.Manifest;
 import android.app.Activity;
+import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.ImageView;
 
-import com.zzh.lib.core.HLibrary;
-import com.zzh.lib.core.utils.HDeviceUtils;
+import com.zzh.lib.core.model.ResultModel;
 import com.zzh.lib.core.utils.HFileUtils;
-import com.zzh.lib.core.utils.HKeyboardUtils;
+import com.zzh.lib.core.utils.HMediaUtils;
+import com.zzh.lib.core.utils.HResUtils;
 import com.zzh.lib.core.utils.LogUtils;
-
-import java.io.File;
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
+import com.zzh.lib.core.utils.ToastUtils;
 
 /**
  * @Date: 2020/7/17 15:59
@@ -31,36 +33,23 @@ public class MainActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        HLibrary.getInstance().init(this.getApplication());
-        HLibrary.setDebug(true);
         et_text = findViewById(R.id.et_text);
-        LogUtils.e(HDeviceUtils.getDeviceBrand());
-        LogUtils.e(HDeviceUtils.getDeviceProduct());
-        LogUtils.e(HDeviceUtils.getDeviceBoard());
-        LogUtils.e(HDeviceUtils.getDeviceDevice());
-        LogUtils.e(HDeviceUtils.getDeviceManufacturer());
-        LogUtils.e(HDeviceUtils.getDeviceUser());
-
-        String absolutePath = HFileUtils.getDatabaseFile().getAbsolutePath();
-        LogUtils.e(absolutePath);
-
-        File file = new File(absolutePath, "aaa.log");
-        if (!file.exists()) {
-            try {
-                file.createNewFile();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-        try {
-            HFileUtils.saveFile("测试测试数据库".getBytes("UTF-8"), file);
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-        }
-
+        LogUtils.e(HFileUtils.getPublicDCIMFile().getAbsolutePath());
+        LogUtils.e("nav bar height: " + HResUtils.getNavBarHeight());
+        LogUtils.e("status bar height: " + HResUtils.getStatusBarHeight());
     }
 
     public void onClickView(View view) {
-        HKeyboardUtils.openKeyboard(et_text);
+        if (checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
+            Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.mipmap.ic_launcher);
+            ResultModel model = HMediaUtils.savePicture("ccccc.jpg", bitmap);
+            String path = HMediaUtils.queryAbsolutePath(model.getUri());
+            LogUtils.e(path);
+            ImageView iv = findViewById(R.id.iv);
+            iv.setImageBitmap(BitmapFactory.decodeFile(path));
+            ToastUtils.show("保存成功");
+            return;
+        }
+        requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.MANAGE_EXTERNAL_STORAGE}, 0);
     }
 }

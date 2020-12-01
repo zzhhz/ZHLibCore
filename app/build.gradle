@@ -5,8 +5,8 @@ android {
     buildToolsVersion '30.0.1'
     defaultConfig {
         applicationId "com.zzh.core"
-        minSdkVersion 19
-        targetSdkVersion 29
+        minSdkVersion 23
+        targetSdkVersion 30
         versionCode 1
         versionName "1.0"
     }
@@ -25,4 +25,5 @@ android {
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation project(path: ':ZZHLibCore')
+    implementation 'com.github.tbruyelle:rxpermissions:0.12'
 }

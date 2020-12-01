@@ -492,4 +492,31 @@ public class HFileUtils {
         return result;
     }
 
+    /**
+     * 获取文件的公共路径 当版本小于Q时使用此方法
+     *
+     * @return
+     */
+    public static File getPublicFile(String type) {
+        return Environment.getExternalStoragePublicDirectory(type);
+    }
+
+    /**
+     * 图片文件路径，当版本小于Q时使用此方法
+     *
+     * @return
+     */
+    public static File getPublicPictureFile() {
+        return getPublicFile(Environment.DIRECTORY_PICTURES);
+    }
+
+    public static File getPublicDCIMFile(){
+        return getPublicFile(Environment.DIRECTORY_DCIM);
+    }
+    public static File getPublicDownloadFile(){
+        return getPublicFile(Environment.DIRECTORY_DOWNLOADS);
+    }
+    public static File getPublicMusicFile(){
+        return getPublicFile(Environment.DIRECTORY_MUSIC);
+    }
 }
