@@ -6,20 +6,23 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     tools:context=".MainActivity">
-    <EditText
+
+    <TextView
         android:id="@+id/et_text"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
+        android:layout_height="wrap_content"
+        android:textSize="20sp" />
 
     <TextView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/app_name"
+        android:layout_height="150dp"
         android:onClick="onClickView"
-        android:textSize="60sp" />
+        android:text="@string/app_name"
+        android:textSize="20sp" />
+
     <ImageView
         android:id="@+id/iv"
         android:layout_width="144px"
-        android:layout_height="144px"/>
+        android:layout_height="144px" />
 
 </LinearLayout>
