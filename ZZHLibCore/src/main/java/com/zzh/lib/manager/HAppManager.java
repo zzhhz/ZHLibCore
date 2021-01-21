@@ -130,7 +130,7 @@ public class HAppManager {
      *
      * @param activity
      */
-    private void removeActivity(Activity activity) {
+    public void removeActivity(Activity activity) {
         if (mActivityHolder.remove(activity)) {
             if (mIsDebug) {
                 Log.e(HAppManager.class.getSimpleName(), "----- " + activity + " " + mActivityHolder.size()
