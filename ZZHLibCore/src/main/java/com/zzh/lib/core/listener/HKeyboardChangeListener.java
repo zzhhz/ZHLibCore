@@ -39,6 +39,13 @@ public class HKeyboardChangeListener implements ViewTreeObserver.OnGlobalLayoutL
         new HKeyboardChangeListener(atx).setKeyBoardListener(keyBoardListener);
     }
 
+    public static void addKeyBoardListener(View container, KeyBoardListener keyBoardListener) {
+        if (container == null) {
+            throw new NullPointerException("container 不能为空");
+        }
+        new HKeyboardChangeListener(container).setKeyBoardListener(keyBoardListener);
+    }
+
     public void setKeyBoardListener(KeyBoardListener keyBoardListen) {
         this.mKeyBoardListen = keyBoardListen;
     }
@@ -48,6 +55,16 @@ public class HKeyboardChangeListener implements ViewTreeObserver.OnGlobalLayoutL
             return;
         }
         mContentView = findContentView(contextObj);
+        if (mContentView != null) {
+            addContentTreeObserver();
+        }
+    }
+
+    public HKeyboardChangeListener(View container) {
+        if (container == null) {
+            return;
+        }
+        mContentView = container;
         if (mContentView != null) {
             addContentTreeObserver();
         }
