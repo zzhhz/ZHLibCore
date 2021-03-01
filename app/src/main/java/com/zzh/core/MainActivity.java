@@ -8,7 +8,6 @@ import android.widget.TextView;
 
 import com.zzh.lib.core.utils.HFileUtils;
 import com.zzh.lib.core.utils.HResUtils;
-import com.zzh.lib.core.utils.HSystemUtils;
 import com.zzh.lib.core.utils.LogUtils;
 
 /**
@@ -45,6 +44,5 @@ public class MainActivity extends Activity {
             return;
         }
         requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.MANAGE_EXTERNAL_STORAGE}, 0);*/
-        HSystemUtils.startAppPermissionSettings();
     }
 }

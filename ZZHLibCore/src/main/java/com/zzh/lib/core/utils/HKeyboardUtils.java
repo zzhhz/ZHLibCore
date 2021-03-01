@@ -37,6 +37,18 @@ public class HKeyboardUtils {
     }
 
     /**
+     * 关闭activity中打开的键盘
+     *
+     * @param view 获取焦点的View
+     */
+    public static void closeKeyboard(View view) {
+        if (view != null) {
+            InputMethodManager inputMethodManager = (InputMethodManager) HLibrary.getInstance().getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+            inputMethodManager.hideSoftInputFromWindow(view.getWindowToken(), 0);
+        }
+    }
+
+    /**
      * 关闭dialog中打开的键盘
      *
      * @param dialog
