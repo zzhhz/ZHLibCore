@@ -64,7 +64,6 @@ public class HKeyboardUtils {
     /**
      * 打开键盘
      *
-     * @param context
      * @param editText
      */
     public static void openKeyboard(final EditText editText) {
@@ -96,6 +95,25 @@ public class HKeyboardUtils {
         InputMethodManager inputMethodManager = (InputMethodManager) HLibrary.getInstance().getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
         if (inputMethodManager.isActive()) {
             inputMethodManager.toggleSoftInput(0, InputMethodManager.HIDE_NOT_ALWAYS);
+        }
+    }
+
+    /**
+     * 判断软键盘是否打开
+     */
+    public static boolean isOpenKeyboard() {
+        return isOpenKeyboard(null);
+    }
+
+    /**
+     * 判断软键盘是否打开
+     */
+    public static boolean isOpenKeyboard(View view) {
+        InputMethodManager inputMethodManager = (InputMethodManager) HLibrary.getInstance().getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+        if (view == null) {
+            return inputMethodManager.isActive();
+        } else {
+            return inputMethodManager.isActive(view);
         }
     }
 
