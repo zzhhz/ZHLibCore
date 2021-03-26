@@ -8769,7 +8769,45 @@ public class HStrUtils {
         Set<String> strings = params.keySet();
 
         for (String key : strings) {
-            dest = replace(dest, String.format(format, key), params.get(key));
+
+            String value = params.get(key);
+
+            dest = replace(dest, String.format(format, key), value);
+        }
+
+        return dest;
+    }
+
+    /**
+     * @param dest   原始字符串
+     * @param format 需要替换的参数
+     * @param params 替换参数的格式规则
+     * @return 替换后的字符串
+     */
+    public static String replaceAllNotObj(String dest, String format, Map<String, Object> params) {
+        if (isEmpty(dest)) {
+            return "";
+        }
+
+        if (params == null || params.isEmpty()) {
+            return dest;
+        }
+
+        Set<String> strings = params.keySet();
+
+        for (String key : strings) {
+
+            Object value = params.get(key);
+
+            if ((value instanceof String
+                    || value instanceof Integer
+                    || value instanceof Double
+                    || value instanceof Long
+                    || value instanceof Float)) {
+
+                dest = replace(dest, String.format(format, key), String.valueOf(value));
+            }
+
         }
 
         return dest;
