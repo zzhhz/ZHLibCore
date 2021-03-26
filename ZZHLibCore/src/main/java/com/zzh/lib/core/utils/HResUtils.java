@@ -59,7 +59,7 @@ public class HResUtils {
     public static String getString(int resId) {
         String strRes = strCache.get(resId);
         if (TextUtils.isEmpty(strRes)) {
-            String value = HLibrary.getLastActivity().getString(resId);
+            String value = HLibrary.getInstance().getContext().getString(resId);
             strCache.put(resId, value);
             return value;
         }
@@ -74,7 +74,7 @@ public class HResUtils {
      * @return 字符串
      */
     public static String getString(int resId, Object... args) {
-        return HLibrary.getLastActivity().getString(resId, args);
+        return HLibrary.getInstance().getContext().getString(resId, args);
     }
 
     /**
@@ -86,7 +86,7 @@ public class HResUtils {
     public static int getIntColor(int colorRes) {
         Integer value = colorCache.get(colorRes);
         if (value == null || value <= 0) {
-            int color = HLibrary.getLastActivity().getResources().getColor(colorRes);
+            int color = HLibrary.getInstance().getContext().getResources().getColor(colorRes);
             colorCache.put(colorRes, color);
             return color;
         }
@@ -100,7 +100,7 @@ public class HResUtils {
     public static float getDimension(int resId) {
         Float value = dimenCache.get(resId);
         if (value == null || value <= 0) {
-            float dimension = HLibrary.getLastActivity().getResources().getDimension(resId);
+            float dimension = HLibrary.getInstance().getContext().getResources().getDimension(resId);
             dimenCache.put(resId, dimension);
             return dimension;
         }
@@ -113,7 +113,7 @@ public class HResUtils {
      * @link HResUtils.getDimensionPixelOffset(resId)
      */
     public static int getDimensionPixelOffset(int resId) {
-        return HLibrary.getLastActivity().getResources().getDimensionPixelOffset(resId);
+        return HLibrary.getInstance().getContext().getResources().getDimensionPixelOffset(resId);
     }
 
     /**
@@ -122,7 +122,7 @@ public class HResUtils {
      * @link HResUtils.getDemension(resId)
      */
     public static int getDimensionPixelSize(int resId) {
-        return HLibrary.getLastActivity().getResources().getDimensionPixelSize(resId);
+        return HLibrary.getInstance().getContext().getResources().getDimensionPixelSize(resId);
     }
 
     /**
